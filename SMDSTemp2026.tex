@@ -1,0 +1,364 @@
+%==================================
+% SMDS TEMPLATE — KELOMPOK ARW
+%==================================
+
+\documentclass[11pt,twoside]{article}
+
+%==================================
+% PACKAGES
+%==================================
+\usepackage{amsmath,amssymb}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage[
+backend=biber,
+style=numeric-comp,
+sorting=none,
+giveninits=true,
+doi=true,
+url=false
+]{biblatex}
+\addbibresource{SMDSBib (1).bib}
+\usepackage{fancyhdr}
+\newcommand{\shorttitle}{}
+\newcommand{\shortauthor}{}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\shorttitle}
+\fancyhead[R]{\small\shortauthor}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\newcommand{\orcidlink}[1]{%
+\href{https://orcid.org/#1}{\includegraphics[height=1.6ex]{ORCID_iD.png}}%
+}
+
+%==================================
+% SIMPLE SMDS MACROS
+%==================================
+\newcommand{\SMDStitle}[1]{\title{\bfseries #1}}
+\newcommand{\SMDSshorttitle}[1]{\def\shorttitle{#1}}
+\newcommand{\SMDSshortafill}[1]{\def\shortauthor{#1}}
+
+\newcommand{\SMDSaffilone}[1]{\def\affilone{#1}}
+
+\newcommand{\SMDSauthorone}[4]{\def\authorone{#1$^{#2}$\,\orcidlink{#3}}}
+\newcommand{\SMDSauthortwo}[4]{\def\authortwo{#1$^{#2}$\,\orcidlink{#3}}}
+\newcommand{\SMDSauthorthree}[4]{\def\authorthree{#1$^{#2}$\,\orcidlink{#3}}}
+\newcommand{\SMDSauthorfour}[4]{\def\authorfour{#1$^{#2}$\,\orcidlink{#3}}}
+
+\newcommand{\SMDScorrespoding}[2]{%
+\def\corrauthor{#1 \href{mailto:#2}{#2}}}
+
+\newcommand{\SMDSKeywords}[1]{
+\vspace{0.5em}
+\noindent\textbf{Keywords:} #1
+}
+
+%==================================
+% METADATA
+%==================================
+
+\SMDStitle{Peramalan Harga Saham PT Bank Central Asia Tbk (BBCA.JK)
+Menggunakan Metode Facebook Prophet}
+
+\SMDSshortafill{D. P. Akrilian et al.}
+\SMDSshorttitle{Peramalan Harga Saham BBCA.JK Menggunakan Facebook Prophet}
+
+\SMDSaffilone{Program Studi Statistika dan Sains Data, Fakultas Matematika dan Ilmu Pengetahuan Alam, Universitas Negeri Semarang}
+
+\SMDSauthorone{Dimas Pasha Akrilian}{1}{0009-0005-6037-3591}{dimaspasha49@students.unnes.ac.id}
+\SMDSauthortwo{Shata Alwan Jalaluddin}{1}{0000-0000-0000-0000}{shataalwanjalaludin@students.unnes.ac.id}
+\SMDSauthorthree{Aaron Christian Daniel}{1}{0000-0000-0000-0000}{aaronstudi1121@students.unnes.ac.id}
+\SMDSauthorfour{Aufaa Zakki Maulidan}{1}{0009-0009-7077-3184}{aufaazakki577@students.unnes.ac.id}
+
+\SMDScorrespoding{$^*$Corresponding author, email:}{dimaspasha49@students.unnes.ac.id}
+
+%==================================
+% AUTHOR BLOCK
+%==================================
+\author{
+\begin{minipage}{\textwidth}
+\authorone,
+\authortwo,
+\authorthree,
+\authorfour
+\\[1em]
+$^1$ \affilone\\
+\corrauthor
+\end{minipage}
+}
+
+%==================================
+
+\begin{document}
+
+\maketitle
+
+%==================================
+\begin{abstract}
+
+Pasar saham merupakan salah satu instrumen investasi yang dinamis dan sangat dipengaruhi oleh
+berbagai faktor ekonomi, politik, dan psikologi pasar. PT Bank Central Asia Tbk (BBCA.JK) adalah
+salah satu saham perbankan paling likuid dan bernilai kapitalisasi terbesar di Bursa Efek Indonesia,
+sehingga akurasi peramalan harga sahamnya memiliki implikasi luas bagi investor dan pengambil
+keputusan keuangan. Penelitian ini bertujuan untuk meramalkan harga penutupan saham BBCA.JK
+menggunakan metode Facebook Prophet, sebuah model dekomposisi deret waktu berbasis komponen
+tren, musiman, dan hari libur yang dikembangkan oleh tim Meta. Data yang digunakan mencakup
+1.787 observasi harga penutupan harian dari periode 1 Januari 2019 hingga 8 Mei 2026 yang
+bersumber dari Yahoo Finance. Tahapan analisis meliputi eksplorasi dan visualisasi data, identifikasi
+komponen tren dan musiman, uji stasioneritas menggunakan Augmented Dickey-Fuller (ADF) test,
+pemodelan dengan Prophet, evaluasi model, serta peramalan lima periode ke depan. Hasil evaluasi
+menunjukkan bahwa model Prophet mampu menangkap pola tren dan musiman pada data harga saham
+dengan performa yang baik. Peramalan jangka pendek dan menengah mengindikasikan kecenderungan
+pergerakan harga yang dapat dijadikan referensi awal bagi investor. Penelitian ini memberikan
+kontribusi pada penerapan metode deret waktu modern berbasis dekomposisi dalam konteks pasar modal
+Indonesia.
+
+\textbf{Abstrak dalam bahasa Inggris (Abstract):}
+The stock market is one of the most dynamic investment instruments, heavily influenced by economic,
+political, and market psychology factors. PT Bank Central Asia Tbk (BBCA.JK) is among the most
+liquid and largest market-capitalization banking stocks on the Indonesia Stock Exchange, making
+accurate price forecasting critically important for investors and financial decision-makers. This study
+aims to forecast the daily closing price of BBCA.JK using the Facebook Prophet method, a
+time-series decomposition model based on trend, seasonal, and holiday components developed by
+Meta's Core Data Science team. The dataset consists of 1,787 daily closing price observations
+spanning from January 1, 2019 to May 8, 2026, sourced from Yahoo Finance. The analysis covers
+data exploration and visualization, identification of trend and seasonal components, stationarity
+testing via the Augmented Dickey-Fuller (ADF) test, Prophet model fitting, model evaluation, and
+five-period-ahead forecasting. Results indicate that the Prophet model effectively captures trend and
+seasonal patterns in stock price data with satisfactory predictive performance. Short- and
+medium-term forecasts suggest discernible price movement tendencies that may serve as preliminary
+references for investors. This study contributes to the application of modern decomposition-based
+time-series methods in the context of the Indonesian capital market.
+
+\end{abstract}
+
+\SMDSKeywords{time series, stock price forecasting, Facebook Prophet, BBCA.JK, Augmented Dickey-Fuller}
+
+%==================================
+\section{Pendahuluan}
+\label{Sec:Intro}
+
+Pasar modal merupakan salah satu pilar penting dalam sistem keuangan suatu negara karena
+berfungsi sebagai wahana mobilisasi dana jangka panjang antara pihak yang memiliki kelebihan modal
+dengan pihak yang membutuhkan pembiayaan \cite{Tandelilin2010}. Dalam konteks Indonesia, Bursa Efek Indonesia
+(BEI) telah menjadi barometer kondisi perekonomian nasional, dengan kapitalisasi pasar yang terus
+berkembang seiring pertumbuhan jumlah investor ritel maupun institusional. Salah satu saham yang
+paling diperhatikan di BEI adalah saham PT Bank Central Asia Tbk dengan kode emiten BBCA.JK,
+yang secara konsisten menempati posisi teratas dalam hal kapitalisasi pasar dan volume perdagangan
+harian. Kondisi ini menjadikan BBCA.JK sebagai objek kajian yang relevan dan strategis dalam
+penelitian pasar modal di Indonesia.
+
+Harga saham merupakan variabel yang bersifat sangat dinamis dan dipengaruhi oleh interaksi
+berbagai faktor, mulai dari kondisi makroekonomi, kebijakan moneter, kinerja fundamental
+perusahaan, hingga sentimen pasar yang seringkali bersifat tidak rasional \cite{Fama1970}. Karakteristik
+tersebut menjadikan data harga saham tergolong sebagai deret waktu yang kompleks, seringkali
+menunjukkan perilaku non-stasioner, adanya komponen tren jangka panjang, pola musiman
+periodik, serta fluktuasi tidak beraturan yang sulit diprediksi. Tantangan ini mendorong
+berkembangnya berbagai pendekatan kuantitatif dan statistik untuk memodelkan serta meramalkan
+pergerakan harga saham secara lebih akurat \cite{Box2015}.
+
+Dalam literatur analisis deret waktu, model \textit{Autoregressive Integrated Moving Average}
+(ARIMA) yang diperkenalkan oleh Box dan Jenkins \cite{Box2015} telah lama menjadi standar dalam
+peramalan data keuangan. Model ini mampu menangkap struktur autokorelasi dalam data stasioner
+dan telah banyak diterapkan pada berbagai konteks pasar keuangan \cite{Mondal2014}. Namun, model ARIMA
+memiliki keterbatasan dalam menangani komponen musiman yang kompleks dan non-linear, sehingga
+melahirkan ekstensi berupa model \textit{Seasonal ARIMA} (SARIMA) \cite{Hyndman2018}. Meskipun SARIMA
+mampu mengakomodasi pola musiman, model ini tetap mengasumsikan linearitas hubungan antar
+komponen deret waktu, yang tidak selalu terpenuhi pada data harga saham yang sangat dinamis.
+
+Perkembangan metode \textit{machine learning} dan pendekatan berbasis dekomposisi kemudian
+membuka alternatif baru dalam analisis deret waktu. Metode seperti \textit{Long Short-Term Memory}
+(LSTM) \cite{Hochreiter1997} dan \textit{Gradient Boosting} \cite{Chen2016} telah menunjukkan performa yang menjanjikan
+pada berbagai kasus peramalan deret waktu keuangan. Namun, metode-metode tersebut umumnya
+membutuhkan volume data yang besar, proses \textit{hyperparameter tuning} yang kompleks, serta
+tingkat interpretabilitas yang relatif rendah bagi pengguna non-teknis. Oleh karena itu, diperlukan
+metode yang mampu menyeimbangkan akurasi prediktif dengan kemudahan interpretasi dan
+implementasi.
+
+Facebook Prophet, yang dikembangkan oleh Taylor dan Letham \cite{Taylor2018} dari tim \textit{Core Data
+Science} Meta Platforms, merupakan model peramalan deret waktu berbasis dekomposisi aditif yang
+dirancang untuk menangani data dengan tren yang tidak linear, komponen musiman berganda, serta
+efek hari libur secara otomatis. Prophet memformulasikan deret waktu sebagai penjumlahan tiga
+komponen utama: tren $g(t)$, musiman $s(t)$, dan efek hari libur $h(t)$, yang dinyatakan sebagai
+\begin{equation*}
+    y(t) = g(t) + s(t) + h(t) + \varepsilon_t,
+\end{equation*}
+di mana $\varepsilon_t$ merupakan komponen galat. Model ini telah terbukti menghasilkan peramalan
+yang robust pada berbagai domain, termasuk data bisnis, cuaca, dan keuangan \cite{Taylor2018}. Kelebihan
+utama Prophet dibandingkan metode konvensional adalah kemampuannya mendeteksi titik-titik
+perubahan tren (\textit{changepoints}) secara otomatis serta menangani data hilang tanpa memerlukan
+imputasi manual \cite{Taylor2018}.
+
+Sejumlah penelitian terdahulu telah menerapkan Prophet pada data keuangan dan pasar saham.
+
+Garlapati et al. [Garlapati2021] menunjukkan bahwa Prophet menghasilkan akurasi yang kompetitif dibandingkan ARIMA pada data saham harian, dengan Prophet mengungguli ARIMA khususnya pada data yang memiliki komponen musiman dan tren non-linear yang kuat.
+
+Jin et al. [Jin2022] menerapkan Prophet dan ARIMA pada data harga penutupan saham Google dan menemukan bahwa Prophet unggul dalam peramalan jangka menengah pada kondisi pasar yang relatif stabil.
+
+Setiawan et al. [Setiawan2023] membandingkan ARIMA dan LSTM pada data saham perbankan Indonesia, termasuk BBCA, dan menemukan bahwa pemilihan model yang tepat bergantung pada karakteristik spesifik data masing-masing saham.Beberapa penelitian terdahulu telah menerapkan Prophet pada data keuangan dan pasar saham. Garlapati et al. [Garlapati2021] menunjukkan bahwa Prophet menghasilkan akurasi yang kompetitif dibandingkan ARIMA pada data saham harian, dengan Prophet mengungguli ARIMA khususnya pada data yang memiliki komponen musiman serta tren non-linear yang kuat. Jin et al. [Jin2022] menerapkan Prophet dan ARIMA pada data harga penutupan saham Google dan menemukan bahwa Prophet unggul dalam peramalan jangka menengah pada kondisi pasar yang relatif stabil. Setiawan et al. [Setiawan2023] membandingkan ARIMA dan LSTM pada data saham perbankan Indonesia, termasuk BBCA, dan menyimpulkan bahwa pemilihan model yang tepat sangat bergantung pada karakteristik spesifik masing-masing saham. Penelitian-penelitian tersebut memperkuat relevansi penggunaan Prophet sebagai metode peramalan pada data harga saham Indonesia, termasuk saham BBCA.JK yang memiliki karakteristik tren meningkat jangka panjang disertai pola musiman harian dan mingguan yang relatif stabil. Penelitian-penelitian tersebut
+memperkuat relevansi penggunaan Prophet sebagai metode peramalan pada data harga saham
+Indonesia, termasuk untuk saham BBCA.JK yang memiliki karakteristik tren meningkat jangka
+panjang disertai pola musiman harian dan mingguan yang relatif stabil.
+
+Uji stasioneritas merupakan tahap prapemrosesan yang esensial dalam analisis deret waktu.
+Data yang non-stasioner mengandung tren atau varians yang berubah sepanjang waktu, sehingga
+model yang dibangun tanpa mengatasi non-stasioneritas akan menghasilkan estimasi yang \textit{spurious}
+\cite{Granger1974}. Augmented Dickey-Fuller (ADF) test \cite{Dickey1979} merupakan uji yang paling umum digunakan
+untuk mendeteksi unit root sebagai indikator non-stasioneritas. Dengan hipotesis nol berupa
+keberadaan unit root, penolakan $H_0$ pada taraf signifikansi tertentu mengindikasikan bahwa data
+bersifat stasioner. Hasil uji ADF ini akan menjadi dasar pertimbangan dalam tahap pemodelan,
+khususnya untuk memahami karakteristik dasar data harga saham BBCA.JK sebelum diterapkan
+pada model Prophet.
+
+Evaluasi kinerja model peramalan dilakukan menggunakan tiga metrik statistik yang umum
+digunakan dalam literatur, yaitu \textit{Mean Absolute Error} (MAE), \textit{Root Mean Square Error}
+(RMSE), dan \textit{Mean Absolute Percentage Error} (MAPE) \cite{Hyndman2006}. Ketiga metrik ini dipilih
+karena masing-masing memberikan perspektif yang berbeda terhadap galat peramalan: MAE
+mengukur rata-rata besarnya galat absolut, RMSE memberikan penalti lebih besar terhadap galat
+yang besar, sedangkan MAPE mengekspresikan galat dalam satuan persentase sehingga memudahkan
+interpretasi lintas konteks.
+
+Berdasarkan uraian di atas, penelitian ini bertujuan untuk menganalisis dan meramalkan harga
+penutupan saham BBCA.JK menggunakan metode Facebook Prophet pada data harian periode
+1 Januari 2019 hingga 8 Mei 2026 dengan total 1.787 observasi. Secara spesifik, penelitian ini
+mencakup eksplorasi dan visualisasi data, identifikasi komponen tren dan musiman, uji stasioneritas
+menggunakan ADF test, pemodelan dengan Prophet, evaluasi kinerja model, serta peramalan
+harga saham untuk lima hari perdagangan ke depan sebagai informasi pendukung pengambilan
+keputusan investasi. Penelitian ini diharapkan memberikan kontribusi praktis bagi investor
+individual maupun institusional yang memerlukan referensi berbasis data dalam mengambil
+keputusan investasi pada saham BBCA.JK, sekaligus memperkaya literatur terapan analisis deret
+waktu dalam konteks pasar modal Indonesia.
+
+Sistematika penulisan artikel ini disusun sebagai berikut. Bagian~\ref{Sec:Tinjauan} memaparkan tinjauan
+pustaka yang menjadi landasan teoretis penelitian. Bagian~\ref{Sec:Method} menjelaskan metodologi
+yang digunakan, mencakup sumber data, prosedur pemodelan, dan kriteria evaluasi. Bagian~\ref{Sec:Results}
+menyajikan hasil analisis dan pembahasan secara komprehensif. Bagian~\ref{Sec:Conclusion} menutup
+artikel dengan kesimpulan dan rekomendasi berbasis hasil analisis.
+
+%==================================
+% CATATAN: Bagian berikut adalah placeholder untuk sisa artikel
+% Lengkapi sesuai kebutuhan
+%==================================
+
+\section{Tinjauan Pustaka}
+\label{Sec:Tinjauan}
+
+\subsection{Pasar Modal dan Perilaku Harga Saham}
+
+Pasar modal merupakan mekanisme yang memungkinkan perusahaan untuk memperoleh
+pendanaan jangka panjang melalui penerbitan instrumen keuangan seperti saham dan obligasi,
+sekaligus memberikan kesempatan bagi investor untuk memperoleh imbal hasil dari modal yang
+ditanamkan \cite{Tandelilin2010}. Dalam konteks teori keuangan, perilaku harga saham telah
+lama dikaitkan dengan konsep \textit{Efficient Market Hypothesis} (EMH) yang dikemukakan
+oleh Fama \cite{Fama1970}. EMH menyatakan bahwa harga saham pada setiap saat
+mencerminkan seluruh informasi yang tersedia, sehingga tidak ada investor yang secara
+konsisten dapat memperoleh keuntungan abnormal melalui analisis historis harga. Meskipun
+demikian, berbagai studi empiris selanjutnya telah menunjukkan adanya anomali pasar yang
+bertentangan dengan bentuk lemah EMH, sehingga membuka ruang bagi pendekatan
+kuantitatif berbasis data historis untuk memodelkan dan meramalkan pergerakan harga saham
+\cite{Box2015}.
+
+\subsection{Analisis Deret Waktu dalam Konteks Keuangan}
+
+Analisis deret waktu merupakan bidang statistik yang mempelajari pola dan struktur data yang
+diamati secara berurutan dalam waktu. Dalam konteks pasar keuangan, data harga saham
+merupakan salah satu contoh deret waktu yang paling banyak diteliti. Hyndman dan
+Athanasopoulos \cite{Hyndman2018} mendefinisikan komponen utama deret waktu yang mencakup
+tren, musiman, siklus, dan komponen residual atau tidak beraturan. Identifikasi yang tepat
+terhadap komponen-komponen tersebut merupakan langkah penting sebelum memilih model
+peramalan yang sesuai.
+
+Sebelum melakukan pemodelan, uji stasioneritas merupakan tahap diagnostik yang esensial.
+Data deret waktu dikatakan stasioner apabila rata-rata, varians, dan struktur autokovariansinya
+tidak berubah sepanjang waktu \cite{Hyndman2018}. Dickey dan Fuller \cite{Dickey1979}
+mengembangkan uji formal untuk mendeteksi keberadaan \textit{unit root} dalam proses
+autoregresif, yang kemudian dikenal sebagai uji Augmented Dickey-Fuller (ADF). Dalam uji
+ini, hipotesis nol menyatakan bahwa data mengandung \textit{unit root} (non-stasioner),
+sehingga penolakan $H_0$ pada tingkat signifikansi tertentu mengindikasikan stasioneritas data.
+Uji ADF telah menjadi standar dalam analisis deret waktu keuangan karena kemampuannya
+mengakomodasi struktur autokorelasi melalui penambahan lag diferensial dalam persamaan
+regresi.
+
+\subsection{Facebook Prophet sebagai Model Peramalan Berbasis Dekomposisi}
+
+Facebook Prophet merupakan prosedur peramalan deret waktu yang dikembangkan oleh
+Taylor dan Letham \cite{Taylor2018} dari tim \textit{Core Data Science} Meta Platforms (dahulu
+Facebook). Prophet didesain sebagai model dekomposisi aditif yang memformulasikan deret
+waktu sebagai
+\begin{equation}
+    y(t) = g(t) + s(t) + h(t) + \varepsilon_t,
+    \label{Eq:Prophet}
+\end{equation}
+di mana $g(t)$ merepresentasikan komponen tren yang dapat berupa model pertumbuhan
+linear dengan titik-titik perubahan (\textit{changepoints}) atau model pertumbuhan logistik,
+$s(t)$ merepresentasikan komponen musiman yang dimodelkan menggunakan deret Fourier,
+$h(t)$ merepresentasikan efek hari libur dan kejadian khusus, serta $\varepsilon_t$ merupakan
+komponen galat yang diasumsikan berdistribusi normal \cite{Taylor2018}.
+
+Keunggulan utama Prophet dibandingkan model konvensional terletak pada beberapa aspek.
+Pertama, Prophet mampu mendeteksi titik-titik perubahan tren secara otomatis menggunakan
+pendekatan \textit{Laplace prior} pada parameter perubahan, sehingga lebih adaptif terhadap
+pergeseran pola tren jangka panjang. Kedua, model ini robust terhadap data yang hilang
+(\textit{missing data}) dan \textit{outlier}, dua permasalahan yang sering dijumpai pada data
+harga saham harian. Ketiga, prophet memungkinkan analis untuk mengintegrasikan pengetahuan
+domain secara eksplisit melalui spesifikasi \textit{changepoints} dan efek hari libur yang
+diketahui \cite{Taylor2018}.
+
+\subsection{Penerapan Prophet pada Data Saham dan Deret Waktu Keuangan}
+
+Garlapati et al.\ \cite{Garlapati2021} membandingkan Prophet dan ARIMA dalam peramalan
+harga saham dan menyimpulkan bahwa keduanya memiliki performa yang kompetitif, dengan
+Prophet menunjukkan keunggulan pada data yang mengandung komponen musiman dan tren
+non-linear yang jelas. Jin et al.\ \cite{Jin2022} menerapkan Prophet dan ARIMA pada data
+harga penutupan saham Google selama periode pandemi COVID-19 dan menemukan bahwa
+model ARIMA memiliki akurasi yang sedikit lebih baik selama periode ketidakpastian tinggi,
+sementara Prophet unggul dalam peramalan jangka menengah dengan data pra-pandemi.
+
+Penelitian yang sangat relevan dengan topik ini dilakukan oleh Wulandari et al.\ yang dikutip
+dalam \cite{Kurnia2025}, di mana metode ARIMA diterapkan pada fluktuasi harga saham
+PT Bank Central Asia Tbk dan menunjukkan bahwa data BBCA memiliki struktur deret waktu
+yang dapat dimodelkan dengan baik menggunakan pendekatan statistik. Penelitian-penelitian
+tersebut secara kolektif menunjukkan bahwa pemilihan metode peramalan untuk data saham
+BBCA.JK perlu mempertimbangkan karakteristik spesifik data, termasuk keberadaan tren jangka
+panjang, pola musiman harian dan mingguan pada data frekuensi tinggi, serta sensitivitas
+terhadap kejadian luar biasa seperti krisis keuangan dan pandemi.
+
+\subsection{Kriteria Evaluasi Model Peramalan}
+
+Evaluasi kualitas model peramalan merupakan tahap kritis yang menentukan apakah model
+yang dibangun layak digunakan dalam pengambilan keputusan. Hyndman dan Koehler
+\cite{Hyndman2006} secara sistematis meninjau berbagai ukuran akurasi peramalan dan
+mengidentifikasi kondisi-kondisi di mana setiap metrik dapat menghasilkan penilaian yang
+keliru. Tiga metrik yang paling umum digunakan dalam literatur peramalan deret waktu
+keuangan adalah \textit{Mean Absolute Error} (MAE), \textit{Root Mean Square Error}
+(RMSE), dan \textit{Mean Absolute Percentage Error} (MAPE), yang masing-masing
+didefinisikan sebagai
+\begin{align}
+    \text{MAE}  &= \frac{1}{n}\sum_{t=1}^{n} |y_t - \hat{y}_t|, \label{Eq:MAE} \\[4pt]
+    \text{RMSE} &= \sqrt{\frac{1}{n}\sum_{t=1}^{n}(y_t - \hat{y}_t)^2}, \label{Eq:RMSE} \\[4pt]
+    \text{MAPE} &= \frac{1}{n}\sum_{t=1}^{n}\left|\frac{y_t - \hat{y}_t}{y_t}\right|\times 100\%, \label{Eq:MAPE}
+\end{align}
+di mana $y_t$ adalah nilai aktual, $\hat{y}_t$ adalah nilai ramalan, dan $n$ adalah jumlah
+observasi dalam periode evaluasi. MAE memberikan penalti yang proporsional terhadap
+besar galat, RMSE memberikan penalti yang lebih besar untuk galat yang ekstrem karena
+sifat kuadratnya, sedangkan MAPE menyatakan galat dalam satuan persentase relatif
+terhadap nilai aktual sehingga memudahkan interpretasi dan perbandingan lintas konteks
+\cite{Hyndman2006}. Lewis \cite{Lewis1982} menetapkan panduan interpretasi nilai MAPE, di mana
+nilai MAPE di bawah 10\% mengindikasikan peramalan yang sangat akurat, 10--20\%
+tergolong akurat, 20--50\% tergolong cukup akurat, dan di atas 50\% tergolong tidak akurat.
+
+%==================================
+% BAGIAN SELANJUTNYA (dikerjakan terpisah):
+%   \section{Metodologi}
+%   \section{Hasil dan Pembahasan}
+%   \section{Kesimpulan}
+%
+% Catatan untuk penulis — nilai evaluasi model:
+%   MAE = 168,18  |  RMSE = 213,37  |  MAPE = 2,74\%
+%==================================
+
+\printbibliography
+
+\end{document}
