@@ -120,215 +120,74 @@ time-series methods in the context of the Indonesian capital market.
 \SMDSKeywords{time series, stock price forecasting, Facebook Prophet, BBCA.JK, Augmented Dickey-Fuller}
 
 %==================================
-\section{Pendahuluan}
+\section{Introduction}
 \label{Sec:Intro}
 
-Pasar modal merupakan salah satu pilar penting dalam sistem keuangan suatu negara karena
-berfungsi sebagai wahana mobilisasi dana jangka panjang antara pihak yang memiliki kelebihan modal
-dengan pihak yang membutuhkan pembiayaan \cite{Tandelilin2010}. Dalam konteks Indonesia, Bursa Efek Indonesia
-(BEI) telah menjadi barometer kondisi perekonomian nasional, dengan kapitalisasi pasar yang terus
-berkembang seiring pertumbuhan jumlah investor ritel maupun institusional. Salah satu saham yang
-paling diperhatikan di BEI adalah saham PT Bank Central Asia Tbk dengan kode emiten BBCA.JK,
-yang secara konsisten menempati posisi teratas dalam hal kapitalisasi pasar dan volume perdagangan
-harian. Kondisi ini menjadikan BBCA.JK sebagai objek kajian yang relevan dan strategis dalam
-penelitian pasar modal di Indonesia.
+The capital market is one of the key pillars of a country's financial system, functioning as a vehicle for long-term fund mobilization between parties with surplus capital and those requiring financing \cite{Tandelilin2010}. In the Indonesian context, the Indonesia Stock Exchange (IDX) has become a barometer of national economic conditions, with market capitalization continuously growing alongside the increasing number of retail and institutional investors. One of the most closely watched stocks on the IDX is PT Bank Central Asia Tbk, listed under the ticker BBCA.JK, which consistently ranks at the top in terms of market capitalization and daily trading volume. This makes BBCA.JK a relevant and strategically significant research object in Indonesian capital market studies.
 
-Harga saham merupakan variabel yang bersifat sangat dinamis dan dipengaruhi oleh interaksi
-berbagai faktor, mulai dari kondisi makroekonomi, kebijakan moneter, kinerja fundamental
-perusahaan, hingga sentimen pasar yang seringkali bersifat tidak rasional \cite{Fama1970}. Karakteristik
-tersebut menjadikan data harga saham tergolong sebagai deret waktu yang kompleks, seringkali
-menunjukkan perilaku non-stasioner, adanya komponen tren jangka panjang, pola musiman
-periodik, serta fluktuasi tidak beraturan yang sulit diprediksi. Tantangan ini mendorong
-berkembangnya berbagai pendekatan kuantitatif dan statistik untuk memodelkan serta meramalkan
-pergerakan harga saham secara lebih akurat \cite{Box2015}.
+Stock prices are highly dynamic variables influenced by the interaction of numerous factors, ranging from macroeconomic conditions, monetary policy, and company fundamentals, to market sentiment that is often irrational \cite{Fama1970}. These characteristics classify stock price data as a complex time series, frequently exhibiting non-stationary behavior, long-term trend components, periodic seasonal patterns, and irregular fluctuations that are difficult to predict. This challenge has driven the development of various quantitative and statistical approaches to model and forecast stock price movements more accurately \cite{Box2015}.
 
-Dalam literatur analisis deret waktu, model \textit{Autoregressive Integrated Moving Average}
-(ARIMA) yang diperkenalkan oleh Box dan Jenkins \cite{Box2015} telah lama menjadi standar dalam
-peramalan data keuangan. Model ini mampu menangkap struktur autokorelasi dalam data stasioner
-dan telah banyak diterapkan pada berbagai konteks pasar keuangan \cite{Mondal2014}. Namun, model ARIMA
-memiliki keterbatasan dalam menangani komponen musiman yang kompleks dan non-linear, sehingga
-melahirkan ekstensi berupa model \textit{Seasonal ARIMA} (SARIMA) \cite{Hyndman2018}. Meskipun SARIMA
-mampu mengakomodasi pola musiman, model ini tetap mengasumsikan linearitas hubungan antar
-komponen deret waktu, yang tidak selalu terpenuhi pada data harga saham yang sangat dinamis.
+In the time series analysis literature, the \textit{Autoregressive Integrated Moving Average} (ARIMA) model introduced by Box and Jenkins \cite{Box2015} has long been the standard in financial data forecasting. This model is capable of capturing autocorrelation structures in stationary data and has been widely applied across various financial market contexts \cite{Mondal2014}. However, ARIMA has limitations in handling complex and non-linear seasonal components, which gave rise to the \textit{Seasonal ARIMA} (SARIMA) extension \cite{Hyndman2018}. Although SARIMA accommodates seasonal patterns, it still assumes linearity in the relationships among time series components—an assumption that is not always met in the highly dynamic stock price data.
 
-Perkembangan metode \textit{machine learning} dan pendekatan berbasis dekomposisi kemudian
-membuka alternatif baru dalam analisis deret waktu. Metode seperti \textit{Long Short-Term Memory}
-(LSTM) \cite{Hochreiter1997} dan \textit{Gradient Boosting} \cite{Chen2016} telah menunjukkan performa yang menjanjikan
-pada berbagai kasus peramalan deret waktu keuangan. Namun, metode-metode tersebut umumnya
-membutuhkan volume data yang besar, proses \textit{hyperparameter tuning} yang kompleks, serta
-tingkat interpretabilitas yang relatif rendah bagi pengguna non-teknis. Oleh karena itu, diperlukan
-metode yang mampu menyeimbangkan akurasi prediktif dengan kemudahan interpretasi dan
-implementasi.
+The development of \textit{machine learning} methods and decomposition-based approaches has opened new alternatives in time series analysis. Methods such as \textit{Long Short-Term Memory} (LSTM) \cite{Hochreiter1997} and \textit{Gradient Boosting} \cite{Chen2016} have demonstrated promising performance in various financial time series forecasting tasks. However, these methods generally require large data volumes, complex hyperparameter tuning processes, and relatively low interpretability for non-technical users. Therefore, a method capable of balancing predictive accuracy with ease of interpretation and implementation is needed.
 
-Facebook Prophet, yang dikembangkan oleh Taylor dan Letham \cite{Taylor2018} dari tim \textit{Core Data
-Science} Meta Platforms, merupakan model peramalan deret waktu berbasis dekomposisi aditif yang
-dirancang untuk menangani data dengan tren yang tidak linear, komponen musiman berganda, serta
-efek hari libur secara otomatis. Prophet memformulasikan deret waktu sebagai penjumlahan tiga
-komponen utama: tren $g(t)$, musiman $s(t)$, dan efek hari libur $h(t)$, yang dinyatakan sebagai
+Facebook Prophet, developed by Taylor and Letham \cite{Taylor2018} from the \textit{Core Data Science} team at Meta Platforms, is an additive decomposition-based time series forecasting model designed to handle data with non-linear trends, multiple seasonal components, and holiday effects automatically. Prophet formulates the time series as the sum of three main components: trend $g(t)$, seasonality $s(t)$, and holiday effects $h(t)$, expressed as
 \begin{equation*}
     y(t) = g(t) + s(t) + h(t) + \varepsilon_t,
 \end{equation*}
-di mana $\varepsilon_t$ merupakan komponen galat. Model ini telah terbukti menghasilkan peramalan
-yang robust pada berbagai domain, termasuk data bisnis, cuaca, dan keuangan \cite{Taylor2018}. Kelebihan
-utama Prophet dibandingkan metode konvensional adalah kemampuannya mendeteksi titik-titik
-perubahan tren (\textit{changepoints}) secara otomatis serta menangani data hilang tanpa memerlukan
-imputasi manual \cite{Taylor2018}.
+where $\varepsilon_t$ is the error component. This model has been proven to produce robust forecasts across various domains, including business, weather, and financial data \cite{Taylor2018}. The primary advantage of Prophet over conventional methods is its ability to automatically detect trend changepoints and handle missing data without requiring manual imputation \cite{Taylor2018}.
 
-Sejumlah penelitian terdahulu telah menerapkan Prophet pada data keuangan dan pasar saham.
+A number of prior studies have applied Prophet to financial and stock market data. Garlapati et al.\ \cite{Garlapati2021} demonstrated that Prophet produces competitive accuracy compared to ARIMA on daily stock data, with Prophet outperforming ARIMA particularly for data exhibiting strong seasonal components and non-linear trends. Jin et al.\ \cite{Jin2022} applied Prophet and ARIMA to Google stock closing price data and found that Prophet outperformed in medium-term forecasting under relatively stable market conditions. Setiawan et al.\ \cite{Setiawan2023} compared ARIMA and LSTM on Indonesian banking stock data, including BBCA, and found that the choice of the most appropriate model depends on the specific characteristics of each stock's data. These studies reinforce the relevance of using Prophet as a forecasting method for Indonesian stock price data, including BBCA.JK, which exhibits a long-term upward trend accompanied by relatively stable daily and weekly seasonal patterns.
 
-Garlapati et al. [Garlapati2021] menunjukkan bahwa Prophet menghasilkan akurasi yang kompetitif dibandingkan ARIMA pada data saham harian, dengan Prophet mengungguli ARIMA khususnya pada data yang memiliki komponen musiman dan tren non-linear yang kuat.
+The stationarity test is an essential preprocessing step in time series analysis. Non-stationary data contains trends or variances that change over time, such that models built without addressing non-stationarity will produce spurious estimates \cite{Granger1974}. The Augmented Dickey-Fuller (ADF) test \cite{Dickey1979} is the most commonly used test for detecting unit roots as an indicator of non-stationarity. With the null hypothesis being the presence of a unit root, rejection of $H_0$ at a certain significance level indicates that the data is stationary. The ADF test results will serve as a basis for modeling considerations, particularly to understand the fundamental characteristics of BBCA.JK stock price data before applying the Prophet model.
 
-Jin et al. [Jin2022] menerapkan Prophet dan ARIMA pada data harga penutupan saham Google dan menemukan bahwa Prophet unggul dalam peramalan jangka menengah pada kondisi pasar yang relatif stabil.
+Model forecasting performance is evaluated using three statistical metrics commonly used in the literature: \textit{Mean Absolute Error} (MAE), \textit{Root Mean Square Error} (RMSE), and \textit{Mean Absolute Percentage Error} (MAPE) \cite{Hyndman2006}. These three metrics are selected because each offers a different perspective on forecasting error: MAE measures the average magnitude of absolute errors, RMSE imposes a greater penalty on large errors, while MAPE expresses errors as a percentage, facilitating cross-context interpretation.
 
-Setiawan et al. [Setiawan2023] membandingkan ARIMA dan LSTM pada data saham perbankan Indonesia, termasuk BBCA, dan menemukan bahwa pemilihan model yang tepat bergantung pada karakteristik spesifik data masing-masing saham. Penelitian-penelitian tersebut memperkuat relevansi penggunaan Prophet sebagai metode peramalan pada data harga saham Indonesia, termasuk saham BBCA.JK yang memiliki karakteristik tren meningkat jangka panjang disertai pola musiman harian dan mingguan yang relatif stabil.
+Based on the foregoing, this study aims to analyze and forecast the closing price of BBCA.JK stock using the Facebook Prophet method on daily data covering the period from January 1, 2019, to May 8, 2026, comprising a total of 1,787 observations. Specifically, this study encompasses data exploration and visualization, identification of trend and seasonal components, stationarity testing using the ADF test, modeling with Prophet, model performance evaluation, and stock price forecasting for the next five trading days as supporting information for investment decision-making. This study is expected to provide practical contributions for individual and institutional investors who require data-driven references for making investment decisions in BBCA.JK stock, while also enriching the applied time series analysis literature in the context of the Indonesian capital market.
 
-Uji stasioneritas merupakan tahap prapemrosesan yang esensial dalam analisis deret waktu.
-Data yang non-stasioner mengandung tren atau varians yang berubah sepanjang waktu, sehingga
-model yang dibangun tanpa mengatasi non-stasioneritas akan menghasilkan estimasi yang \textit{spurious}
-\cite{Granger1974}. Augmented Dickey-Fuller (ADF) test \cite{Dickey1979} merupakan uji yang paling umum digunakan
-untuk mendeteksi unit root sebagai indikator non-stasioneritas. Dengan hipotesis nol berupa
-keberadaan unit root, penolakan $H_0$ pada taraf signifikansi tertentu mengindikasikan bahwa data
-bersifat stasioner. Hasil uji ADF ini akan menjadi dasar pertimbangan dalam tahap pemodelan,
-khususnya untuk memahami karakteristik dasar data harga saham BBCA.JK sebelum diterapkan
-pada model Prophet.
+The structure of this article is organized as follows. Section~\ref{Sec:Tinjauan} presents the literature review serving as the theoretical foundation of the study. Section~\ref{Sec:Method} describes the methodology employed, including data sources, modeling procedures, and evaluation criteria. Section~\ref{Sec:Results} presents the analysis results and discussion comprehensively. Section~\ref{Sec:Conclusion} concludes the article with conclusions and recommendations based on the analysis results.
 
-Evaluasi kinerja model peramalan dilakukan menggunakan tiga metrik statistik yang umum
-digunakan dalam literatur, yaitu \textit{Mean Absolute Error} (MAE), \textit{Root Mean Square Error}
-(RMSE), dan \textit{Mean Absolute Percentage Error} (MAPE) \cite{Hyndman2006}. Ketiga metrik ini dipilih
-karena masing-masing memberikan perspektif yang berbeda terhadap galat peramalan: MAE
-mengukur rata-rata besarnya galat absolut, RMSE memberikan penalti lebih besar terhadap galat
-yang besar, sedangkan MAPE mengekspresikan galat dalam satuan persentase sehingga memudahkan
-interpretasi lintas konteks.
+---
 
-Berdasarkan uraian di atas, penelitian ini bertujuan untuk menganalisis dan meramalkan harga
-penutupan saham BBCA.JK menggunakan metode Facebook Prophet pada data harian periode
-1 Januari 2019 hingga 8 Mei 2026 dengan total 1.787 observasi. Secara spesifik, penelitian ini
-mencakup eksplorasi dan visualisasi data, identifikasi komponen tren dan musiman, uji stasioneritas
-menggunakan ADF test, pemodelan dengan Prophet, evaluasi kinerja model, serta peramalan
-harga saham untuk lima hari perdagangan ke depan sebagai informasi pendukung pengambilan
-keputusan investasi. Penelitian ini diharapkan memberikan kontribusi praktis bagi investor
-individual maupun institusional yang memerlukan referensi berbasis data dalam mengambil
-keputusan investasi pada saham BBCA.JK, sekaligus memperkaya literatur terapan analisis deret
-waktu dalam konteks pasar modal Indonesia.
-
-Sistematika penulisan artikel ini disusun sebagai berikut. Bagian~\ref{Sec:Tinjauan} memaparkan tinjauan
-pustaka yang menjadi landasan teoretis penelitian. Bagian~\ref{Sec:Method} menjelaskan metodologi
-yang digunakan, mencakup sumber data, prosedur pemodelan, dan kriteria evaluasi. Bagian~\ref{Sec:Results}
-menyajikan hasil analisis dan pembahasan secara komprehensif. Bagian~\ref{Sec:Conclusion} menutup
-artikel dengan kesimpulan dan rekomendasi berbasis hasil analisis.
-
-%==================================
-% CATATAN: Bagian berikut adalah placeholder untuk sisa artikel
-% Lengkapi sesuai kebutuhan
-%==================================
-
-\section{Tinjauan Pustaka}
+\section{Literature Review}
 \label{Sec:Tinjauan}
 
-\subsection{Pasar Modal dan Perilaku Harga Saham}
+\subsection{Capital Markets and Stock Price Behavior}
 
-Pasar modal merupakan mekanisme yang memungkinkan perusahaan untuk memperoleh
-pendanaan jangka panjang melalui penerbitan instrumen keuangan seperti saham dan obligasi,
-sekaligus memberikan kesempatan bagi investor untuk memperoleh imbal hasil dari modal yang
-ditanamkan \cite{Tandelilin2010}. Dalam konteks teori keuangan, perilaku harga saham telah
-lama dikaitkan dengan konsep \textit{Efficient Market Hypothesis} (EMH) yang dikemukakan
-oleh Fama \cite{Fama1970}. EMH menyatakan bahwa harga saham pada setiap saat
-mencerminkan seluruh informasi yang tersedia, sehingga tidak ada investor yang secara
-konsisten dapat memperoleh keuntungan abnormal melalui analisis historis harga. Meskipun
-demikian, berbagai studi empiris selanjutnya telah menunjukkan adanya anomali pasar yang
-bertentangan dengan bentuk lemah EMH, sehingga membuka ruang bagi pendekatan
-kuantitatif berbasis data historis untuk memodelkan dan meramalkan pergerakan harga saham
-\cite{Box2015}.
+The capital market is a mechanism that enables companies to obtain long-term financing through the issuance of financial instruments such as stocks and bonds, while simultaneously providing investors with the opportunity to earn returns on invested capital \cite{Tandelilin2010}. Within the context of financial theory, stock price behavior has long been associated with the \textit{Efficient Market Hypothesis} (EMH) proposed by Fama \cite{Fama1970}. EMH posits that stock prices at any given time reflect all available information, such that no investor can consistently earn abnormal returns through historical price analysis. Nevertheless, numerous subsequent empirical studies have documented market anomalies that contradict the weak form of EMH, thereby opening space for quantitative approaches based on historical data to model and forecast stock price movements \cite{Box2015}.
 
-\subsection{Analisis Deret Waktu dalam Konteks Keuangan}
+\subsection{Time Series Analysis in the Financial Context}
 
-Analisis deret waktu merupakan bidang statistik yang mempelajari pola dan struktur data yang
-diamati secara berurutan dalam waktu. Dalam konteks pasar keuangan, data harga saham
-merupakan salah satu contoh deret waktu yang paling banyak diteliti. Hyndman dan
-Athanasopoulos \cite{Hyndman2018} mendefinisikan komponen utama deret waktu yang mencakup
-tren, musiman, siklus, dan komponen residual atau tidak beraturan. Identifikasi yang tepat
-terhadap komponen-komponen tersebut merupakan langkah penting sebelum memilih model
-peramalan yang sesuai.
+Time series analysis is a field of statistics that studies patterns and structures in data observed sequentially over time. In the context of financial markets, stock price data represents one of the most extensively studied time series. Hyndman and Athanasopoulos \cite{Hyndman2018} define the main components of a time series as comprising trend, seasonality, cycle, and residual or irregular components. Accurate identification of these components is an essential step before selecting an appropriate forecasting model.
 
-Sebelum melakukan pemodelan, uji stasioneritas merupakan tahap diagnostik yang esensial.
-Data deret waktu dikatakan stasioner apabila rata-rata, varians, dan struktur autokovariansinya
-tidak berubah sepanjang waktu \cite{Hyndman2018}. Dickey dan Fuller \cite{Dickey1979}
-mengembangkan uji formal untuk mendeteksi keberadaan \textit{unit root} dalam proses
-autoregresif, yang kemudian dikenal sebagai uji Augmented Dickey-Fuller (ADF). Dalam uji
-ini, hipotesis nol menyatakan bahwa data mengandung \textit{unit root} (non-stasioner),
-sehingga penolakan $H_0$ pada tingkat signifikansi tertentu mengindikasikan stasioneritas data.
-Uji ADF telah menjadi standar dalam analisis deret waktu keuangan karena kemampuannya
-mengakomodasi struktur autokorelasi melalui penambahan lag diferensial dalam persamaan
-regresi.
+Prior to modeling, the stationarity test is an essential diagnostic step. A time series is said to be stationary when its mean, variance, and autocovariance structure do not change over time \cite{Hyndman2018}. Dickey and Fuller \cite{Dickey1979} developed a formal test to detect the presence of a \textit{unit root} in an autoregressive process, which became known as the Augmented Dickey-Fuller (ADF) test. In this test, the null hypothesis states that the data contains a \textit{unit root} (non-stationary), so that rejection of $H_0$ at a certain significance level indicates data stationarity. The ADF test has become the standard in financial time series analysis due to its ability to accommodate autocorrelation structures through the addition of differential lags in the regression equation.
 
-\subsection{Facebook Prophet sebagai Model Peramalan Berbasis Dekomposisi}
+\subsection{Facebook Prophet as a Decomposition-Based Forecasting Model}
 
-Facebook Prophet merupakan prosedur peramalan deret waktu yang dikembangkan oleh
-Taylor dan Letham \cite{Taylor2018} dari tim \textit{Core Data Science} Meta Platforms (dahulu
-Facebook). Prophet didesain sebagai model dekomposisi aditif yang memformulasikan deret
-waktu sebagai
+Facebook Prophet is a time series forecasting procedure developed by Taylor and Letham \cite{Taylor2018} from the \textit{Core Data Science} team at Meta Platforms (formerly Facebook). Prophet is designed as an additive decomposition model that formulates the time series as
 \begin{equation}
     y(t) = g(t) + s(t) + h(t) + \varepsilon_t,
     \label{Eq:Prophet}
 \end{equation}
-di mana $g(t)$ merepresentasikan komponen tren yang dapat berupa model pertumbuhan
-linear dengan titik-titik perubahan (\textit{changepoints}) atau model pertumbuhan logistik,
-$s(t)$ merepresentasikan komponen musiman yang dimodelkan menggunakan deret Fourier,
-$h(t)$ merepresentasikan efek hari libur dan kejadian khusus, serta $\varepsilon_t$ merupakan
-komponen galat yang diasumsikan berdistribusi normal \cite{Taylor2018}.
+where $g(t)$ represents the trend component, which can take the form of a linear growth model with changepoints or a logistic growth model; $s(t)$ represents the seasonal component modeled using Fourier series; $h(t)$ represents the effects of holidays and special events; and $\varepsilon_t$ is the error component assumed to be normally distributed \cite{Taylor2018}.
 
-Keunggulan utama Prophet dibandingkan model konvensional terletak pada beberapa aspek.
-Pertama, Prophet mampu mendeteksi titik-titik perubahan tren secara otomatis menggunakan
-pendekatan \textit{Laplace prior} pada parameter perubahan, sehingga lebih adaptif terhadap
-pergeseran pola tren jangka panjang. Kedua, model ini robust terhadap data yang hilang
-(\textit{missing data}) dan \textit{outlier}, dua permasalahan yang sering dijumpai pada data
-harga saham harian. Ketiga, prophet memungkinkan analis untuk mengintegrasikan pengetahuan
-domain secara eksplisit melalui spesifikasi \textit{changepoints} dan efek hari libur yang
-diketahui \cite{Taylor2018}.
+The primary advantages of Prophet over conventional models lie in several aspects. First, Prophet is capable of automatically detecting trend changepoints using a \textit{Laplace prior} approach on the change parameters, making it more adaptive to shifts in long-term trend patterns. Second, the model is robust to missing data and outliers—two issues frequently encountered in daily stock price data. Third, Prophet allows analysts to explicitly incorporate domain knowledge through the specification of known changepoints and holiday effects \cite{Taylor2018}.
 
-\subsection{Penerapan Prophet pada Data Saham dan Deret Waktu Keuangan}
+\subsection{Application of Prophet to Stock and Financial Time Series Data}
 
-Garlapati et al.\ \cite{Garlapati2021} membandingkan Prophet dan ARIMA dalam peramalan
-harga saham dan menyimpulkan bahwa keduanya memiliki performa yang kompetitif, dengan
-Prophet menunjukkan keunggulan pada data yang mengandung komponen musiman dan tren
-non-linear yang jelas. Jin et al.\ \cite{Jin2022} menerapkan Prophet dan ARIMA pada data
-harga penutupan saham Google selama periode pandemi COVID-19 dan menemukan bahwa
-model ARIMA memiliki akurasi yang sedikit lebih baik selama periode ketidakpastian tinggi,
-sementara Prophet unggul dalam peramalan jangka menengah dengan data pra-pandemi.
+Garlapati et al.\ \cite{Garlapati2021} compared Prophet and ARIMA in stock price forecasting and concluded that both methods offer competitive performance, with Prophet demonstrating superiority on data with clear seasonal components and non-linear trends. Jin et al.\ \cite{Jin2022} applied Prophet and ARIMA to Google stock closing price data during the COVID-19 pandemic period and found that the ARIMA model yielded slightly better accuracy during periods of high uncertainty, while Prophet outperformed in medium-term forecasting using pre-pandemic data.
 
-Penelitian yang sangat relevan dengan topik ini dilakukan oleh Wulandari et al.\ yang dikutip
-dalam \cite{Kurnia2025}, di mana metode ARIMA diterapkan pada fluktuasi harga saham
-PT Bank Central Asia Tbk dan menunjukkan bahwa data BBCA memiliki struktur deret waktu
-yang dapat dimodelkan dengan baik menggunakan pendekatan statistik. Penelitian-penelitian
-tersebut secara kolektif menunjukkan bahwa pemilihan metode peramalan untuk data saham
-BBCA.JK perlu mempertimbangkan karakteristik spesifik data, termasuk keberadaan tren jangka
-panjang, pola musiman harian dan mingguan pada data frekuensi tinggi, serta sensitivitas
-terhadap kejadian luar biasa seperti krisis keuangan dan pandemi.
+A highly relevant study to this topic was conducted by Wulandari et al., as cited in \cite{Kurnia2025}, where the ARIMA method was applied to the stock price fluctuations of PT Bank Central Asia Tbk and demonstrated that BBCA data exhibits a time series structure that can be effectively modeled using statistical approaches. Collectively, these studies indicate that the selection of a forecasting method for BBCA.JK stock data must consider the specific characteristics of the data, including the presence of long-term trends, daily and weekly seasonal patterns in high-frequency data, and sensitivity to extraordinary events such as financial crises and pandemics.
 
-\subsection{Kriteria Evaluasi Model Peramalan}
+\subsection{Forecasting Model Evaluation Criteria}
 
-Evaluasi kualitas model peramalan merupakan tahap kritis yang menentukan apakah model
-yang dibangun layak digunakan dalam pengambilan keputusan. Hyndman dan Koehler
-\cite{Hyndman2006} secara sistematis meninjau berbagai ukuran akurasi peramalan dan
-mengidentifikasi kondisi-kondisi di mana setiap metrik dapat menghasilkan penilaian yang
-keliru. Tiga metrik yang paling umum digunakan dalam literatur peramalan deret waktu
-keuangan adalah \textit{Mean Absolute Error} (MAE), \textit{Root Mean Square Error}
-(RMSE), dan \textit{Mean Absolute Percentage Error} (MAPE), yang masing-masing
-didefinisikan sebagai
+The evaluation of forecasting model quality is a critical stage that determines whether the constructed model is suitable for use in decision-making. Hyndman and Koehler \cite{Hyndman2006} systematically reviewed various forecasting accuracy measures and identified conditions under which each metric can produce misleading assessments. The three metrics most commonly used in the financial time series forecasting literature are \textit{Mean Absolute Error} (MAE), \textit{Root Mean Square Error} (RMSE), and \textit{Mean Absolute Percentage Error} (MAPE), each defined as
 \begin{align}
     \text{MAE}  &= \frac{1}{n}\sum_{t=1}^{n} |y_t - \hat{y}_t|, \label{Eq:MAE} \\[4pt]
     \text{RMSE} &= \sqrt{\frac{1}{n}\sum_{t=1}^{n}(y_t - \hat{y}_t)^2}, \label{Eq:RMSE} \\[4pt]
     \text{MAPE} &= \frac{1}{n}\sum_{t=1}^{n}\left|\frac{y_t - \hat{y}_t}{y_t}\right|\times 100\%, \label{Eq:MAPE}
 \end{align}
-di mana $y_t$ adalah nilai aktual, $\hat{y}_t$ adalah nilai ramalan, dan $n$ adalah jumlah
-observasi dalam periode evaluasi. MAE memberikan penalti yang proporsional terhadap
-besar galat, RMSE memberikan penalti yang lebih besar untuk galat yang ekstrem karena
-sifat kuadratnya, sedangkan MAPE menyatakan galat dalam satuan persentase relatif
-terhadap nilai aktual sehingga memudahkan interpretasi dan perbandingan lintas konteks
-\cite{Hyndman2006}. Lewis \cite{Lewis1982} menetapkan panduan interpretasi nilai MAPE, di mana
-nilai MAPE di bawah 10\% mengindikasikan peramalan yang sangat akurat, 10--20\%
-tergolong akurat, 20--50\% tergolong cukup akurat, dan di atas 50\% tergolong tidak akurat.
-
+where $y_t$ is the actual value, $\hat{y}_t$ is the forecasted value, and $n$ is the number of observations in the evaluation period. MAE imposes a proportional penalty relative to the magnitude of the error, RMSE imposes a greater penalty for extreme errors due to its quadratic nature, while MAPE expresses errors as a percentage relative to the actual value, facilitating interpretation and cross-context comparison \cite{Hyndman2006}. Lewis \cite{Lewis1982} established interpretive guidelines for MAPE values, where a MAPE below 10\% indicates highly accurate forecasting, 10--20\% is considered accurate, 20--50\% is considered reasonably accurate, and above 50\% is considered inaccurate.
 %==================================
 % BAGIAN SELANJUTNYA (dikerjakan terpisah):
 %   \section{Metodologi}
