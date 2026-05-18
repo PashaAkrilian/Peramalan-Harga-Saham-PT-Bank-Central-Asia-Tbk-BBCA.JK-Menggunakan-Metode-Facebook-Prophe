@@ -9,6 +9,7 @@
 *.out
 *.run.xml
 *.synctex.gz
+output/
 
 # VS Code workspace settings
 .vscode/

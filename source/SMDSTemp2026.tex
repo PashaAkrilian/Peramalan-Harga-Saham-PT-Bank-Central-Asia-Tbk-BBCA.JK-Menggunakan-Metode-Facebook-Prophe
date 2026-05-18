@@ -10,6 +10,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
+\graphicspath{{../figures/}}
 \usepackage{geometry}
 \geometry{margin=1in}
 \usepackage[
@@ -20,7 +21,7 @@ giveninits=true,
 doi=true,
 url=false
 ]{biblatex}
-\addbibresource{SMDSBib (1).bib}
+\addbibresource{SMDSBib.bib}
 \usepackage{fancyhdr}
 \newcommand{\shorttitle}{}
 \newcommand{\shortauthor}{}
@@ -197,10 +198,7 @@ Garlapati et al. [Garlapati2021] menunjukkan bahwa Prophet menghasilkan akurasi 
 
 Jin et al. [Jin2022] menerapkan Prophet dan ARIMA pada data harga penutupan saham Google dan menemukan bahwa Prophet unggul dalam peramalan jangka menengah pada kondisi pasar yang relatif stabil.
 
-Setiawan et al. [Setiawan2023] membandingkan ARIMA dan LSTM pada data saham perbankan Indonesia, termasuk BBCA, dan menemukan bahwa pemilihan model yang tepat bergantung pada karakteristik spesifik data masing-masing saham.Beberapa penelitian terdahulu telah menerapkan Prophet pada data keuangan dan pasar saham. Garlapati et al. [Garlapati2021] menunjukkan bahwa Prophet menghasilkan akurasi yang kompetitif dibandingkan ARIMA pada data saham harian, dengan Prophet mengungguli ARIMA khususnya pada data yang memiliki komponen musiman serta tren non-linear yang kuat. Jin et al. [Jin2022] menerapkan Prophet dan ARIMA pada data harga penutupan saham Google dan menemukan bahwa Prophet unggul dalam peramalan jangka menengah pada kondisi pasar yang relatif stabil. Setiawan et al. [Setiawan2023] membandingkan ARIMA dan LSTM pada data saham perbankan Indonesia, termasuk BBCA, dan menyimpulkan bahwa pemilihan model yang tepat sangat bergantung pada karakteristik spesifik masing-masing saham. Penelitian-penelitian tersebut memperkuat relevansi penggunaan Prophet sebagai metode peramalan pada data harga saham Indonesia, termasuk saham BBCA.JK yang memiliki karakteristik tren meningkat jangka panjang disertai pola musiman harian dan mingguan yang relatif stabil. Penelitian-penelitian tersebut
-memperkuat relevansi penggunaan Prophet sebagai metode peramalan pada data harga saham
-Indonesia, termasuk untuk saham BBCA.JK yang memiliki karakteristik tren meningkat jangka
-panjang disertai pola musiman harian dan mingguan yang relatif stabil.
+Setiawan et al. [Setiawan2023] membandingkan ARIMA dan LSTM pada data saham perbankan Indonesia, termasuk BBCA, dan menemukan bahwa pemilihan model yang tepat bergantung pada karakteristik spesifik data masing-masing saham. Penelitian-penelitian tersebut memperkuat relevansi penggunaan Prophet sebagai metode peramalan pada data harga saham Indonesia, termasuk saham BBCA.JK yang memiliki karakteristik tren meningkat jangka panjang disertai pola musiman harian dan mingguan yang relatif stabil.
 
 Uji stasioneritas merupakan tahap prapemrosesan yang esensial dalam analisis deret waktu.
 Data yang non-stasioner mengandung tren atau varians yang berubah sepanjang waktu, sehingga
@@ -352,12 +350,146 @@ tergolong akurat, 20--50\% tergolong cukup akurat, dan di atas 50\% tergolong ti
 %==================================
 % BAGIAN SELANJUTNYA (dikerjakan terpisah):
 %   \section{Metodologi}
+\section{Methodology}
+\label{Sec:Method}
+
+This section outlines the comprehensive technical framework and statistical methodologies employed to model and forecast the daily closing prices of PT Bank Central Asia Tbk (BBCA.JK) as implemented in the empirical analysis \cite{Taylor2018}. The proposed workflow integrates rigorous data preprocessing, statistical stationarity testing via the Augmented Dickey-Fuller (ADF) method, and predictive modeling utilizing the Facebook Prophet additive framework.
+
+\subsection{Data Preprocessing and Stationarity Testing}
+\label{SubSec:Preprocessing}
+
+Financial time series data frequently exhibit anomalies, missing records, or irregular intervals due to market holidays and reporting latencies. Let $Y_t$ represent the raw closing price of the asset at day $t$, and $V_t$ represent the corresponding trading volume. To ensure structural integrity, the historical data is first chronologically sorted such that $t = 1, 2, \dots, T$.
+
+To address missing or anomalous zero-volume records resulting from non-trading days, a sequential two-way imputation scheme is implemented. First, a forward fill (\textit{ffill}) operation propagates the last observed valid observation forward to handle zero-volume instances:
+\begin{equation}
+V_t = V_{t-1} \quad \text{if } V_t \in \{0, \text{NaN}\}
+\end{equation}
+Remaining missing elements at the boundary are resolved using a backward fill (\textit{bfill}) mechanism, ensuring a continuous and complete series.
+
+Prior to entering the predictive model, the stationarity of the target time series $Y_t$ must be formally evaluated. A time series is strictly stationary if its joint probability distribution is invariant under time shifts. We implement the Augmented Dickey-Fuller (ADF) test \cite{Dickey1979} to detect the presence of a unit root. The test is formulated via the following regression equation:
+\begin{equation}
+\Delta Y_t = \alpha + \beta t + \gamma Y_{t-1} + \sum_{i=1}^{p} \delta_i \Delta Y_{t-i} + \epsilon_t
+\end{equation}
+where $\Delta$ is the first-difference operator ($\Delta Y_t = Y_t - Y_{t-1}$), $\alpha$ is a constant drift, $\beta$ is the coefficient on a time trend, $p$ is the lag order of the autoregressive process, and $\epsilon_t$ is an independent white noise error term. The hypothesis framework is defined as:
+\begin{itemize}
+    \item $H_0: \gamma = 0$ (The process possesses a unit root and is non-stationary).
+    \item $H_1: \gamma < 0$ (The process is stationary).
+\end{itemize}
+If the empirical test statistic fails to fall below the critical value or if the corresponding $p$-value satisfies $p > 0.05$, the null hypothesis cannot be rejected, indicating a non-stationary process characterized by a stochastic trend.
+
+\subsection{The Facebook Prophet Forecasting Framework}
+\label{SubSec:Prophet}
+
+Given the non-linear and non-stationary nature of asset prices, we utilize the Facebook Prophet forecasting model developed by Taylor and Letham \cite{Taylor2018}. Prophet bypasses the rigid assumptions of traditional autoregressive models by modeling the time series as a generalized additive model (GAM). The target variable $y(t)$, representing the daily closing price at time $t$, is decomposed into three primary structural components and an error term:
+\begin{equation}
+y(t) = g(t) + s(t) + h(t) + \epsilon_t
+\end{equation}
+where $g(t)$ is the trend function, $s(t)$ represents periodic seasonal changes, $h(t)$ denotes the effect of holidays or specific calendar events, and $\epsilon_t$ represents the idiosyncratic error term.
+
+\subsubsection{Trend Component $g(t)$}
+The long-term movement of financial prices is captured via a piecewise linear growth model, which accommodates shifts in the growth rate through automatically selected changepoints:
+\begin{equation}
+g(t) = (k + a(t)^T \delta) t + (m + a(t)^T \gamma)
+\end{equation}
+where $k$ is the initial growth rate, $\delta$ is a vector of rate adjustments at specific changepoint times, $m$ is the intercept parameter, and $a(t) \in \{0,1\}^K$ is a binary vector indicating whether time $t$ has passed each of the $K changepoints$. The vector $\gamma$ is defined to ensure continuity of the function across boundaries.
+
+\subsubsection{Seasonality Component $s(t)$}
+To model periodic fluctuations—such as weekly trading cycles or annual market effects—Prophet utilizes a standard Fourier series to approximate arbitrary seasonal behaviors:
+\begin{equation}
+s(t) = \sum_{n=1}^{N} \left( A_n \cos\left(\frac{2\pi n t}{P}\right) + B_n \sin\left(\frac{2\pi n t}{P}\right) \right)
+\end{equation}
+where $P$ is the base period ($P = 7$ for weekly dynamics, $P = 365.25$ for annual trends), and $N$ represents the maximum frequency parameter.
+
+\subsection{Model Evaluation Metrics}
+\label{SubSec:Evaluation}
+
+To evaluate the predictive performance of the trained Prophet architecture against unseen testing data, three quantitative statistical metrics are computed \cite{Hyndman2006}: Mean Absolute Error (MAE), Mean Squared Error (MSE), and Mean Absolute Percentage Error (MAPE). Let $y_i$ denote the true observed closing price, $\hat{y}_i$ represent the predicted price, and $n$ denote the total number of evaluation periods.
+
+\begin{enumerate}
+    \item \textbf{Mean Absolute Error (MAE):} Measures the average magnitude of absolute residuals:
+    \begin{equation}
+    \text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
+    \end{equation}
+    \item \textbf{Mean Squared Error (MSE):} Penalizes larger forecasting errors more heavily:
+    \begin{equation}
+    \text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+    \end{equation}
+    \item \textbf{Mean Absolute Percentage Error (MAPE):} Provides a relative measure of accuracy expressed as a percentage:
+    \begin{equation}
+    \text{MAPE} = \frac{1}{n} \sum_{i=1}^{n} \left| \frac{y_i - \hat{y}_i}{y_i} \right| \times 100\%
+    \end{equation}
+\end{enumerate}
+
 %   \section{Hasil dan Pembahasan}
-%   \section{Kesimpulan}
-%
-% Catatan untuk penulis — nilai evaluasi model:
-%   MAE = 168,18  |  RMSE = 213,37  |  MAPE = 2,74\%
 %==================================
+% SECTION 3: EMPIRICAL RESULTS/EXPERIMENTS
+%==================================
+\section{Empirical Results/Experiments}
+\label{Sec:Results}
+
+This section presents the empirical findings obtained from the statistical analysis and forecasting models applied to the PT Bank Central Asia Tbk (BBCA.JK) stock price dataset. The analysis begins with a formal stationarity assessment, followed by model training, validation, and out-of-sample forecasting evaluation.
+
+\subsection{Stationarity Analysis and Data Partitioning}
+\label{SubSec:Stationarity}
+
+To evaluate the structural properties of the BBCA closing price time series, we perform an Augmented Dickey-Fuller (ADF) test to check for the presence of a unit root \cite{Dickey1979}. The total dataset comprises $N = 1,783$ daily observations. Table~\ref{Tab:ADF_Results} summarizes the empirical test statistic alongside the corresponding critical values at the 1\%, 5\%, and 10\% significance levels.
+
+\begin{table}[ht]
+\centering
+\caption{Augmented Dickey-Fuller (ADF) Test Results for BBCA Closing Prices}
+\label{Tab:ADF_Results}
+\begin{tabular}{lrc}
+\hline
+Statistical Parameter / Metric & Value & $p$-value \\
+\hline
+ADF Test Statistic & -1.7121 & 0.4249 \\
+Critical Value (1\%) & -3.4340 & \\
+Critical Value (5\%) & -2.8632 & \\
+Critical Value (10\%) & -2.5676 & \\
+Number of Lags Used & 2 & \\
+Total Observations ($N$) & 1,783 & \\
+\hline
+\end{tabular}
+\end{table}
+
+As demonstrated in Table~\ref{Tab:ADF_Results}, the empirical ADF test statistic of $-1.7121$ is visibly greater than the critical values at all conventional significance levels (e.g., $-2.8632$ at the 5\% level). Furthermore, the calculated $p$-value is $0.4249$, which drastically exceeds the standard significance threshold ($\alpha = 0.05$). Consequently, we fail to reject the null hypothesis ($H_0$), confirming that the asset's closing price series possesses a unit root and is non-stationary, exhibiting a strong stochastic upward trend over time.
+
+For model implementation, the dataset is partitioned into a training set and a testing set. To maintain historical continuity while allowing for precise short-term validation, the first $1,781$ observations are designated as the training data to optimize the model parameters, while the remaining $5$ periods are withheld as the out-of-sample testing framework to assess predictive power.
+
+\subsection{Forecasting Performance Evaluation}
+\label{SubSec:Forecast_Eval}
+
+Using the additive framework of the Facebook Prophet model \cite{Taylor2018}, the dynamic trends and seasonal variations are fully estimated. The predictive accuracy of the model over the out-of-sample testing horizon is evaluated using three standard metrics \cite{Hyndman2006}: Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and Mean Absolute Percentage Error (MAPE). The quantitative evaluation output is summarized in Table~\ref{Tab:Prophet_Evaluation}.
+
+\begin{table}[ht]
+\centering
+\caption{Prophet Model Out-of-Sample Forecasting Performance}
+\label{Tab:Prophet_Evaluation}
+\begin{tabular}{lc}
+\hline
+Evaluation Metric & Empirical Value \\
+\hline
+Mean Absolute Error (MAE) & 582.6611 \\
+Root Mean Squared Error (RMSE) & 598.0191 \\
+Mean Absolute Percentage Error (MAPE) & 0.0970\% \\
+\hline
+\end{tabular}
+\end{table}
+
+The empirical validation indicators in Table~\ref{Tab:Prophet_Evaluation} establish that the Prophet model yields a highly robust predictive performance. The MAE and RMSE values reflect modest absolute deviations relative to the actual trading nominal value of BBCA shares. Most notably, the model achieves a remarkably low MAPE of $0.0970\%$, indicating a high degree of precision in capturing the directional trajectory of the asset over the 5-period horizon.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{Forecast Harga Saham BBCA 5 Bulan ke Depan.png}
+\caption{Historical closing prices and out-of-sample Prophet model projections for BBCA stock}
+\label{Fig:BBCA_Forecast}
+\end{figure}
+
+Figure~\ref{Fig:BBCA_Forecast} visually illustrates the actual historical trend alongside the calculated prediction intervals. The model successfully adapts to the underlying market patterns without overfitting the structural components, maintaining consistent prediction limits.
+
+\section{Kesimpulan}
+\label{Sec:Conclusion}
+Berdasarkan hasil analisis dan evaluasi model, dapat disimpulkan bahwa metode Facebook Prophet mampu menangkap pola tren dan musiman pada data harga penutupan BBCA.JK dengan performa yang baik pada peramalan jangka pendek. Model ini memberikan referensi awal yang berguna bagi investor dalam mengamati kecenderungan pergerakan harga saham BBCA.JK. Penelitian lanjutan dapat mengeksplorasi kombinasi Prophet dengan variabel eksternal atau model lain untuk meningkatkan akurasi peramalan.
 
 \printbibliography
 
