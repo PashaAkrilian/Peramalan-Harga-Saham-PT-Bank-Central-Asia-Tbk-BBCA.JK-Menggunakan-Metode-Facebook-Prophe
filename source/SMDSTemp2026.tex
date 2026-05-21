@@ -57,17 +57,19 @@ url=false
 }
 
 %==================================
-% METADATA
+% METADATA (SMDS JOURNAL FORMAT)
 %==================================
-
-\SMDStitle{Peramalan Harga Saham PT Bank Central Asia Tbk (BBCA.JK)
-Menggunakan Metode Facebook Prophet}
+\SMDStitle{Peramalan Harga Saham PT Bank Central Asia Tbk (BBCA.JK) Menggunakan Metode Facebook Prophet}
 
 \SMDSshortafill{D. P. Akrilian et al.}
 \SMDSshorttitle{Peramalan Harga Saham BBCA.JK Menggunakan Facebook Prophet}
 
-\SMDSaffilone{Program Studi Statistika dan Sains Data, Fakultas Matematika dan Ilmu Pengetahuan Alam, Universitas Negeri Semarang}
+% Afiliasi tunggal ditulis satu kali saja untuk semua penulis
+\SMDSaffilone{Department of Statistics and Data Science, Faculty of Mathematics and Natural Sciences, Universitas Negeri Semarang, Indonesia}
 
+%---------------------------------
+% AUTHORS DEFINITION
+%---------------------------------
 \SMDSauthorone{Dimas Pasha Akrilian}{1}{0009-0005-6037-3591}{dimaspasha49@students.unnes.ac.id}
 \SMDSauthortwo{Shata Alwan Jalaluddin}{1}{0000-0000-0000-0000}{shataalwanjalaludin@students.unnes.ac.id}
 \SMDSauthorthree{Aaron Christian Daniel}{1}{0000-0000-0000-0000}{aaronstudi1121@students.unnes.ac.id}
@@ -76,7 +78,7 @@ Menggunakan Metode Facebook Prophet}
 \SMDScorrespoding{$^*$Corresponding author, email:}{dimaspasha49@students.unnes.ac.id}
 
 %==================================
-% AUTHOR BLOCK
+% AUTHOR BLOCK AUTHORIZATION
 %==================================
 \author{
 \begin{minipage}{\textwidth}
@@ -93,6 +95,9 @@ $^1$ \affilone\\
 %==================================
 
 \begin{document}
+\raggedbottom
+\setlength\emergencystretch{3em}
+\sloppy
 
 \maketitle
 
@@ -176,7 +181,7 @@ imputasi manual \cite{Taylor2018}.
 
 Sejumlah penelitian terdahulu telah menerapkan Prophet pada data keuangan dan pasar saham.
 
-Garlapati et al. [Garlapati2021] menunjukkan bahwa Prophet menghasilkan akurasi yang kompetitif dibandingkan ARIMA pada data saham harian, dengan Prophet mengungguli ARIMA khususnya pada data yang memiliki komponen musiman dan tren non-linear yang kuat.
+Garlapati et al. [Garlapati2021] menunjukkan bahwa Prophet menghasilkan akurasi yang kompetitif dibandingkan ARIMA pada data saham harian. Prophet mengungguli ARIMA khususnya pada data yang memiliki komponen musiman dan tren non-linear yang kuat.
 
 Jin et al. [Jin2022] menerapkan Prophet dan ARIMA pada data harga penutupan saham Google dan menemukan bahwa Prophet unggul dalam peramalan jangka menengah pada kondisi pasar yang relatif stabil.
 
@@ -368,14 +373,14 @@ y(t) = g(t) + s(t) + h(t) + \epsilon_t
 \end{equation}
 where $g(t)$ is the trend function, $s(t)$ represents periodic seasonal changes, $h(t)$ denotes the effect of holidays or specific calendar events, and $\epsilon_t$ represents the idiosyncratic error term.
 
-\subsubsection{Trend Component $g(t)$}
+\subsubsection{Trend Component \texorpdfstring{$g(t)$}{g(t)}}
 The long-term movement of financial prices is captured via a piecewise linear growth model, which accommodates shifts in the growth rate through automatically selected changepoints:
 \begin{equation}
 g(t) = (k + a(t)^T \delta) t + (m + a(t)^T \gamma)
 \end{equation}
 where $k$ is the initial growth rate, $\delta$ is a vector of rate adjustments at specific changepoint times, $m$ is the intercept parameter, and $a(t) \in \{0,1\}^K$ is a binary vector indicating whether time $t$ has passed each of the $K changepoints$. The vector $\gamma$ is defined to ensure continuity of the function across boundaries.
 
-\subsubsection{Seasonality Component $s(t)$}
+\subsubsection{Seasonality Component \texorpdfstring{$s(t)$}{s(t)}}
 To model periodic fluctuations—such as weekly trading cycles or annual market effects—Prophet utilizes a standard Fourier series to approximate arbitrary seasonal behaviors:
 \begin{equation}
 s(t) = \sum_{n=1}^{N} \left( A_n \cos\left(\frac{2\pi n t}{P}\right) + B_n \sin\left(\frac{2\pi n t}{P}\right) \right)
@@ -453,7 +458,7 @@ Evaluation Metric & Empirical Value \\
 \hline
 Mean Absolute Error (MAE) & 582.6611 \\
 Root Mean Squared Error (RMSE) & 598.0191 \\
-Mean Absolute Percentage Error (MAPE) & 0.0970\% \\
+Mean Absolute Percentage Error (MAPE) & 0.0970 \\
 \hline
 \end{tabular}
 \end{table}
